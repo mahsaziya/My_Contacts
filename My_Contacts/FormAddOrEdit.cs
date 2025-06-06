@@ -15,6 +15,7 @@ namespace My_Contacts
     public partial class FormAddOrEdit : Form
     {
         IContactsReposetory reposetory;
+        public int contactid = 0;
         public FormAddOrEdit()
         {
             InitializeComponent();
@@ -23,10 +24,26 @@ namespace My_Contacts
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (ValidateInputs())
+            if (contactid== 0)
             {
-               bool isSuccess= reposetory.Insert(txtName.Text, txtFamily.Text, txtMobile.Text, txtEmail.Text, txtAdress.Text);
-                if ( isSuccess = true)
+                if (ValidateInputs())
+                {
+                    bool isSuccess = reposetory.Insert(txtName.Text, txtFamily.Text, txtMobile.Text, txtEmail.Text, txtAdress.Text);
+                    if (isSuccess == true)
+                    {
+                        MessageBox.Show("عملیات با موفقیت انجام شد ", "Successs", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        DialogResult = DialogResult.OK;
+                    }
+                    else
+                    {
+                        MessageBox.Show("عملیات با شکست مواجه شد", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                bool isSuccess = reposetory.Update(contactid, txtName.Text, txtFamily.Text, txtAdress.Text, txtMobile.Text, txtEmail.Text);
+                if (isSuccess==true)
                 {
                     MessageBox.Show("عملیات با موفقیت انجام شد ", "Successs", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     DialogResult = DialogResult.OK;
@@ -36,6 +53,7 @@ namespace My_Contacts
                     MessageBox.Show("عملیات با شکست مواجه شد", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+           
             
         }
         bool ValidateInputs()
@@ -70,7 +88,24 @@ namespace My_Contacts
 
         private void FormAddOrEdit_Load(object sender, EventArgs e)
         {
-            this.Text = "افزودن شخص";
+            if (contactid == 0)
+            {
+                this.Text = "افزودن شخص";
+
+            }
+            else
+            {
+                this.Text = "ویرایش";
+                DataTable dt = reposetory.SelectRow(contactid);
+                txtName.Text = dt.Rows[0][1].ToString();
+                txtFamily.Text = dt.Rows[0][2].ToString();
+                txtMobile.Text = dt.Rows[0][3].ToString();
+                txtEmail.Text = dt.Rows[0][4].ToString();
+                txtAdress.Text = dt.Rows[0][5].ToString();
+                button1.Text = "ویرایش";
+
+
+            }
         }
     }
 }

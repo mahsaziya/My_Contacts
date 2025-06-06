@@ -16,7 +16,27 @@ namespace My_Contacts.Services
         //private string connectionString = "Data Sourse=MAHSA;Initial Catalog=Contacts_DB;Integreted Security=true";
         public bool Delete(int ContactID)
         {
-            throw new NotImplementedException();
+            SqlConnection conection = new SqlConnection(connectionString);
+
+            try
+            {
+                string qury = "Delete From My_Contacts Where ContactsID=@ID";
+                SqlCommand command = new SqlCommand(qury, conection);
+                command.Parameters.AddWithValue("@ID", ContactID);
+                conection.Open();
+                command.ExecuteNonQuery();
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                conection.Close();
+                
+            }
+            return true;
+
         }
 
         public bool Insert(string Name, string Family, string Mobile, string Email, string Adress)
@@ -61,6 +81,20 @@ namespace My_Contacts.Services
             }
         }
 
+        public DataTable Search(string alfa)
+        {
+            //لایک یک دستور کلیدیه که اگه شامل این حرف باشه مقدار رو برمیگردونه . 
+            // اگه درصد اول باشه اونی که با حرف وارد شده تموم بشه رو برمیگردونه
+            //اگه درصد دو طرف باشه یعنی اینکه اون حرف شامل باشه رو برمیگردونه
+            string query = "Select * From My_Contacts where Name like @p or Family like @p";
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+            adapter.SelectCommand.Parameters.AddWithValue("@p","%"+ alfa+"%");
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            return (data);
+        }
+
         public DataTable SelectAll()
         {
             string query = "Select * From My_Contacts";
@@ -73,21 +107,47 @@ namespace My_Contacts.Services
             return (data);
 
 
-
-
-
-
         }
 
 
         public DataTable SelectRow(int ContactID)
         {
-            throw new NotImplementedException();
+
+
+            string query = "Select * From My_Contacts where ContactsID=" + ContactID;
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            return data;
+
         }
 
         public bool Update(int ContactID, string Name, string Family, string Mobile, string Email, string Adress)
         {
-            throw new NotImplementedException();
+            SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                string query = "Update My_Contacts Set Name=@Name,Family=@Family,Mobile=@Mobile,Email=@Email,Adress=@Adress Where ContactsID=@ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ID", ContactID);
+                command.Parameters.AddWithValue("@Name", Name);
+                command.Parameters.AddWithValue("@Family", Family);
+                command.Parameters.AddWithValue("@Mobile", Mobile);
+                command.Parameters.AddWithValue("@Email", Email);
+                command.Parameters.AddWithValue("@Adress", Adress);
+                connection.Open();
+                command.ExecuteNonQuery();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
     }
 }

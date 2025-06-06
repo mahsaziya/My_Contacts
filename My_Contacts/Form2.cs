@@ -49,10 +49,60 @@ namespace My_Contacts
         {
             FormAddOrEdit form = new FormAddOrEdit();
             form.ShowDialog();
-            if (DialogResult ==DialogResult.OK)
+            if (DialogResult == DialogResult.OK)
             {
                 BindGrid();
             }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow != null)
+            {
+                string name = dataGridView1.CurrentRow.Cells[1].Value.ToString();
+                string family = dataGridView1.CurrentRow.Cells[2].Value.ToString();
+                string fulname = name + " " + family;
+                DialogResult res = MessageBox.Show($"آیا میخواهید {fulname} را حذف کنید ؟ ", "warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning); ;
+                if ( res== DialogResult.Yes)
+                {
+                    int ContactID = int.Parse(dataGridView1.CurrentRow.Cells[0].Value.ToString());
+                    repository.Delete(ContactID);
+                    MessageBox.Show("عملیات با موفقیت انجام شد.");
+                    BindGrid();
+                }
+
+
+            }
+            else
+            {
+                MessageBox.Show("لطفا یک شخص را انتخاب کنید", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if(dataGridView1.CurrentRow!=null)
+            {
+
+                int contactsiD= int.Parse(dataGridView1.CurrentRow.Cells[0].Value.ToString());
+                FormAddOrEdit Form = new FormAddOrEdit();
+                Form.contactid = contactsiD;
+                if (Form.ShowDialog() == DialogResult.OK)
+                {
+                    BindGrid();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("لطفا یک کاربر را انخاب کنید ", " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = repository.Search(textBox1.Text);
+          
         }
     }
 }

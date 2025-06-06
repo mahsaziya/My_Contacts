@@ -12,6 +12,7 @@ namespace My_Contacts.Reposetory
     {
         DataTable SelectAll();
         DataTable SelectRow(int ContactID);
+        DataTable Search(string alfa);
         bool Delete(int ContactID);
         bool Insert(string Name, string Family, string Mobile, string Email, string Adress);
         bool Update(int ContactID, string Name, string Family, string Mobile, string Email, string Adress);
